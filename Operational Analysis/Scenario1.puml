@@ -1,0 +1,88 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|Passengers|
+start
+:Request ticket;
+
+|SOI – WT System|
+:Provide ticket;
+
+|Passengers|
+:Travel to station;
+
+|SOI – WT System|
+:Arrive at station;
+:Secure train;~
+:Announce stop;
+
+fork
+  |Passengers|
+  :Present ticket;
+
+  |SOI – WT System|
+  :Validate ticket;
+
+  if (Ticket valid?) then
+    -->[yes]
+    |Passengers|
+    :Access platform;
+    repeat
+      :Disembark passengers;
+    repeat while (Passengers remaining?)
+    repeat
+      :Embark passengers;
+    repeat while (Boarding complete?)
+    :Send Passenger Ready;
+  else
+    -->[no]
+    |Passengers|
+    :Access denied;
+    stop
+  endif
+
+fork again
+  |Cargo Handling|
+  repeat
+    :Unload freight;
+  repeat while (Unloading complete?)
+  repeat
+    :Load freight;
+  repeat while (Loading complete?)
+  :Send Cargo Ready;
+
+fork again
+  |Catering|
+  :Restock supplies;
+  :Remove waste;
+  :Send Catering Ready;
+
+fork again
+  |Cleaning|
+  :Clean interior;
+  :Confirm cabin readiness;
+  :Send Cleaning Ready;
+end fork
+
+|SOI – WT System|
+:Evaluate departure readiness;
+
+if (All services ready?) then
+  -->[yes]
+  :Obtain departure clearance;
+  :Announce departure;
+  :Initiate departure;
+else
+  -->[no]
+  :Hold at station;
+  stop
+endif
+
+:Leave station area;
+stop
+@enduml

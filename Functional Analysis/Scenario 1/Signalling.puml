@@ -1,0 +1,60 @@
+@startuml
+skinparam monochrome true
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|Train|
+start
+:Train approaching station;
+
+|Control Center|
+:Request train position & speed;
+
+|Signaling|
+:Relay data request to Train;
+
+|Train|
+:Send position & speed;
+
+|Signaling|
+:Receive train position & speed;
+:Capture train state;
+:Forward train data;
+
+|Control Center|
+:Receive train data;
+:Process train data;
+:Compute estimated arrival time (ETA);
+if (ETA stable?) then
+  -->[yes]
+  :Confirm ETA;
+else
+  -->[no]
+  :Update ETA;
+endif
+:Monitor arrival progression;
+
+|Signaling|
+:Receive ETA;
+:Relay ETA information;
+
+|Train Station|
+:Display arrival time information;
+
+|Passengers|
+:Receive arrival information;
+
+|Train|
+:Train arrives at station area;
+
+|Signaling|
+:Receive arrival confirmation;
+:Notify Train Station of arrival;
+
+|Train Station|
+:Confirm train arrival at platform;
+
+stop
+@enduml

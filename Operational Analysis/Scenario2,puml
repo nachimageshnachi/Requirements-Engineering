@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|SOI – WT System|
+start
+:Approach railroad crossing;
+:Reduce speed as required;
+:Announce upcoming crossing;
+
+|Citizens|
+:Observe approaching train;
+:Comply with crossing constraints;
+
+|SOI – WT System|
+:Ensure crossing is protected;
+
+if (Crossing safe?) then
+  -->[yes]
+  :Traverse railroad crossing;
+else
+  -->[no]
+  :Stop before crossing;
+  :Wait until crossing safe;
+  :Traverse railroad crossing;
+endif
+
+:Clear railroad crossing;
+:Resume normal operation speed;
+
+|Citizens|
+:Resume normal movement;
+
+stop
+@enduml

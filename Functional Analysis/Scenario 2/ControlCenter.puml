@@ -1,0 +1,47 @@
+@startuml
+skinparam monochrome true
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|Train|
+start
+:Train approaching crossing;
+
+|Control Center|
+:Request train position and speed;
+
+|Signaling|
+:Relay data request;
+
+|Train|
+:Send train state;
+
+|Signaling|
+:Forward train state;
+
+|Control Center|
+:Monitor approach to crossing;
+:Evaluate safety status;
+
+if (Crossing safe?) then
+  -->[yes]
+  :Approve crossing traversal;
+else
+  -->[no]
+  :Instruct hold before crossing;
+endif
+
+|Signaling|
+:Transmit control instruction;
+
+|Train|
+:React to instruction;
+:Traverse crossing when authorized;
+
+|Control Center|
+:Monitor crossing clearance;
+
+stop
+@enduml

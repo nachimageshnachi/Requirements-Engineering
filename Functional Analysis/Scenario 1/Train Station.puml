@@ -1,0 +1,88 @@
+@startuml
+skinparam monochrome true
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|Train|
+start
+:Train approaching station;
+
+|Signaling|
+:Receive train data;
+:Forward train data;
+
+|Control Center|
+:Request platform availability;
+
+|Signaling|
+:Relay availability request;
+
+|Train Station|
+:Receive availability request;
+:Check platform availability;
+:Send availability status;
+
+|Signaling|
+:Relay availability status;
+
+|Control Center|
+:Authorize arrival;
+
+|Signaling|
+:Transmit arrival authorization;
+
+fork
+  |Train Station|
+  :Prepare platform;
+
+fork again
+  |Train|
+  :Approach platform;
+  :Stop train;
+end fork
+
+|Train Station|
+:Confirm train arrival at platform;
+:Allow passenger disembarkation;
+
+' ===== STATION-CENTRIC OPERATIONS =====
+fork
+  |Train Station|
+  :Manage passenger embarkation;
+
+fork again
+  |Train Station|
+  :Coordinate catering service;
+
+fork again
+  |Train Station|
+  :Coordinate cleaning activities;
+
+fork again
+  |Train Station|
+  :Perform basic maintenance readiness check;
+end fork
+' ===== END STATION OPERATIONS =====
+
+|Train Station|
+:Collect service completion status;
+:Confirm station readiness for departure;
+:Send departure readiness;
+
+|Signaling|
+:Forward departure readiness;
+
+|Control Center|
+:Receive departure readiness;
+:Issue departure clearance;
+
+|Signaling|
+:Transmit departure clearance;
+
+|Train|
+:Receive departure clearance;
+
+stop
+@enduml

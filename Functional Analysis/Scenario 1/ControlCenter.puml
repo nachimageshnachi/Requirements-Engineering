@@ -1,0 +1,63 @@
+@startuml
+skinparam monochrome true
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|Train|
+start
+:Train approaching station;
+
+|Control Center|
+:Request train position & speed;
+
+|Signaling|
+:Relay data request to Train;
+
+|Train|
+:Send position & speed;
+
+|Signaling|
+:Receive train data;
+:Forward train data to Control Center;
+
+|Control Center|
+:Receive train position & speed;
+:Request platform availability;
+
+|Signaling|
+:Relay availability request;
+
+|Train Station|
+:Check platform availability;
+:Send availability status;
+
+|Signaling|
+:Relay availability status;
+
+|Control Center|
+if (Platform available?) then
+  -->[yes]
+  :Allocate platform;
+  :Issue arrival approval;
+else
+  -->[no]
+  :Issue delay decision;
+endif
+
+fork
+  |Signaling|
+  :Transmit decision;
+
+fork again
+  |Train Station|
+  :Prepare platform if approved;
+
+fork again
+  |Train|
+  :React to decision;
+end fork
+
+stop
+@enduml

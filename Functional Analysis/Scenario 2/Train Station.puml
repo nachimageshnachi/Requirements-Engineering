@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|Train|
+start
+:Train approaching railroad crossing;
+
+|Signaling|
+:Inform station of approaching crossing;
+
+|Train Station|
+:Acknowledge crossing activity;
+:Maintain station operations;
+
+|Control Center|
+:Authorize crossing traversal;
+
+|Signaling|
+:Relay traversal authorization;
+
+|Train|
+:Traverse railroad crossing;
+
+|Signaling|
+:Notify crossing cleared;
+
+|Train Station|
+:Resume normal operations;
+
+stop
+@enduml
