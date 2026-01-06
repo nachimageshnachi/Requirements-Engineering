@@ -32,13 +32,6 @@ fork
     -->[yes]
     |Passengers|
     :Access platform;
-    repeat
-      :Disembark passengers;
-    repeat while (Passengers remaining?)
-    repeat
-      :Embark passengers;
-    repeat while (Boarding complete?)
-    :Send Passenger Ready;
   else
     -->[no]
     |Passengers|
