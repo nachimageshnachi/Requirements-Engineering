@@ -18,7 +18,7 @@ start
 
 |SOI – WT System|
 :Arrive at station;
-:Secure train;~
+:Secure train;
 :Announce stop;
 
 fork
@@ -28,12 +28,23 @@ fork
   |SOI – WT System|
   :Validate ticket;
 
-  if (Ticket valid?) then
-    -->[yes]
+  if (Ticket valid?) then (yes)
     |Passengers|
     :Access platform;
-  else
-    -->[no]
+    
+    |SOI – WT System|
+    repeat
+      :Disembark passengers;
+    repeat while (Passengers remaining?) is (yes)
+    ->no;
+
+    repeat
+      :Embark passengers;
+    repeat while (Boarding complete?) is (no)
+    ->yes;
+
+    :Send Passenger Ready;
+  else (no)
     |Passengers|
     :Access denied;
     stop
@@ -43,10 +54,14 @@ fork again
   |Cargo Handling|
   repeat
     :Unload freight;
-  repeat while (Unloading complete?)
+  repeat while (Unloading complete?) is (no)
+  ->yes;
+
   repeat
     :Load freight;
-  repeat while (Loading complete?)
+  repeat while (Loading complete?) is (no)
+  ->yes;
+
   :Send Cargo Ready;
 
 fork again
@@ -63,19 +78,18 @@ fork again
 end fork
 
 |SOI – WT System|
-:Evaluate departure readiness;
+repeat
+  :Evaluate departure readiness;
+  if (All services ready?) then (yes)
+    break
+  else (no)
+    :Hold at station;
+  endif
+repeat while (Waiting...)
 
-if (All services ready?) then
-  -->[yes]
-  :Obtain departure clearance;
-  :Announce departure;
-  :Initiate departure;
-else
-  -->[no]
-  :Hold at station;
-  stop
-endif
-
+:Obtain departure clearance;
+:Announce departure;
+:Initiate departure;
 :Leave station area;
 stop
 @enduml

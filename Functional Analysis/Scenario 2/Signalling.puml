@@ -7,42 +7,23 @@ skinparam activity {
 
 |Train|
 start
-:Train approaching crossing;
+:Train moves along track;
+
+|Signaling (SOI – Focus)|
+:Detect train presence;
+:Determine speed and direction;
+:Receive train state information;
+:Relay train approach information;
 
 |Control Center|
-:Request train speed and position;
+:Receive train approach information;
+:Estimate distance to crossing;
+:Generate train approach information;
 
-|Signaling|
-:Relay status request to Train;
-
-|Train|
-:Send speed and position;
-
-|Signaling|
-:Forward train state to Control Center;
-
-|Control Center|
-:Evaluate crossing conditions;
-:Assess safety constraints;
-
-if (Crossing safe?) then
-  -->[yes]
-  :Authorize crossing traversal;
-else
-  -->[no]
-  :Issue stop instruction;
-  :Wait until crossing safe;
-  :Authorize crossing traversal;
-endif
-
-|Signaling|
-:Relay authorization to Train;
-
-|Train|
-:Traverse crossing;
-
-|Control Center|
-:Confirm crossing cleared;
+|Signaling (SOI – Focus)|
+:Continue monitoring train;
+:Detect train clears approach zone;
+:Pass Control Center clearance to Train Station;
 
 stop
 @enduml

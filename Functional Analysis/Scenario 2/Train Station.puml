@@ -5,31 +5,37 @@ skinparam activity {
   BorderColor Black
 }
 
-|Train|
+|Control Center|
 start
-:Train approaching railroad crossing;
+:Send command to activate crossing protection;
 
-|Signaling|
-:Inform station of approaching crossing;
+|Train Station (SOI – Focus)|
+:Receive protection activation command;
+:Activate warning lights & bell;
+:Send CLOSE command to gate;
 
-|Train Station|
-:Acknowledge crossing activity;
-:Maintain station operations;
+|Gate (External Infrastructure)|
+:Gate arms lowering;
+:Gate fully closed;
+
+|Train Station (SOI – Focus)|
+:Receive gate closed feedback;
+:Report gate closed status to Control Center;
 
 |Control Center|
-:Authorize crossing traversal;
+:Send command to release crossing protection;
 
-|Signaling|
-:Relay traversal authorization;
+|Train Station (SOI – Focus)|
+:Deactivate warning lights & bell;
+:Send OPEN command to gate;
 
-|Train|
-:Traverse railroad crossing;
+|Gate (External Infrastructure)|
+:Gate arms raising;
+:Gate fully open;
 
-|Signaling|
-:Notify crossing cleared;
-
-|Train Station|
-:Resume normal operations;
+|Train Station (SOI – Focus)|
+:Receive gate open feedback;
+:Report gate open status to Control Center;
 
 stop
 @enduml

@@ -1,5 +1,6 @@
 @startuml
 skinparam monochrome true
+skinparam packageStyle rectangle
 skinparam activity {
   BackgroundColor White
   BorderColor Black
@@ -26,14 +27,18 @@ start
 |Control Center|
 :Receive train data;
 :Process train data;
-:Compute estimated arrival time (ETA);
-if (ETA stable?) then
-  -->[yes]
-  :Confirm ETA;
-else
-  -->[no]
-  :Update ETA;
-endif
+
+repeat
+  :Compute estimated arrival time (ETA);
+  if (ETA stable?) then (yes)
+    :Confirm ETA;
+    break
+  else (no)
+    :Update ETA;
+  endif
+backward:Wait for state update;
+repeat while (Re-evaluate?) is (yes)
+
 :Monitor arrival progression;
 
 |Signaling|

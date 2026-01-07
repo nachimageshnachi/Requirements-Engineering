@@ -1,5 +1,6 @@
 @startuml
 skinparam monochrome true
+skinparam packageStyle rectangle
 skinparam activity {
   BackgroundColor White
   BorderColor Black
@@ -24,33 +25,35 @@ start
 
 |Control Center|
 :Receive train position & speed;
-:Request platform availability;
+
+repeat
+  :Request platform availability;
+
+  |Signaling|
+  :Relay availability request;
+
+  |Train Station|
+  :Check platform availability;
+  :Send availability status;
+
+  |Signaling|
+  :Relay availability status;
+
+  |Control Center|
+  if (Platform available?) then (yes)
+    :Allocate platform;
+    :Issue arrival approval;
+    break
+  else (no)
+    :Issue delay decision;
+  endif
+backward:Wait for update;
+repeat while (Check again?) is (yes)
 
 |Signaling|
-:Relay availability request;
-
-|Train Station|
-:Check platform availability;
-:Send availability status;
-
-|Signaling|
-:Relay availability status;
-
-|Control Center|
-if (Platform available?) then
-  -->[yes]
-  :Allocate platform;
-  :Issue arrival approval;
-else
-  -->[no]
-  :Issue delay decision;
-endif
+:Transmit decision;
 
 fork
-  |Signaling|
-  :Transmit decision;
-
-fork again
   |Train Station|
   :Prepare platform if approved;
 

@@ -5,43 +5,63 @@ skinparam activity {
   BorderColor Black
 }
 
-|Train|
+|Signaling|
+:Detect train;
+:Provide train approach information;
+
+|Control Center (SOI – Focus)|
 start
-:Train approaching crossing;
+:Receive train approach information;
+:Validate information freshness;
+:Assess crossing risk;
 
-|Control Center|
-:Request train position and speed;
-
-|Signaling|
-:Relay data request;
-
-|Train|
-:Send train state;
-
-|Signaling|
-:Forward train state;
-
-|Control Center|
-:Monitor approach to crossing;
-:Evaluate safety status;
-
-if (Crossing safe?) then
-  -->[yes]
-  :Approve crossing traversal;
-else
-  -->[no]
-  :Instruct hold before crossing;
+if (Crossing protection required?) then (yes)
+  :Command activation of crossing protection;
+else (no)
+  :Continue monitoring;
+  stop
 endif
 
-|Signaling|
-:Transmit control instruction;
+|Train Station|
+:Execute protection activation;
+:Send CLOSE command to gate;
+:Activate warning lights & bell;
 
-|Train|
-:React to instruction;
-:Traverse crossing when authorized;
+|Gate (External Infrastructure)|
+:Gate arms lowering;
+:Gate fully closed;
 
-|Control Center|
-:Monitor crossing clearance;
+|Train Station|
+:Receive gate closed status;
+:Report gate closed status;
 
+|Control Center (SOI – Focus)|
+:Receive gate closed status;
+if (Crossing secured?) then (yes)
+  :Authorize crossing traversal;
+else (no)
+  :Abort crossing;
+  stop
+endif
+
+:Monitor crossing traversal;
+:Confirm crossing cleared;
+:Command release of crossing protection;
+
+|Train Station| 
+:Deactivate warning lights & bell;
+:Send OPEN command to gate;
+
+|Gate (External Infrastructure)|
+:Gate arms raising;
+:Gate fully open;
+
+|Train Station|
+:Receive gate open status;
+:Report gate open status;
+
+|Control Center (SOI – Focus)|
+:Receive gate open status;
+:Resume normal operation;
 stop
 @enduml

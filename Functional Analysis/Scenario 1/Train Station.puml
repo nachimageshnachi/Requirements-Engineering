@@ -1,5 +1,6 @@
 @startuml
 skinparam monochrome true
+skinparam packageStyle rectangle
 skinparam activity {
   BackgroundColor White
   BorderColor Black
@@ -14,21 +15,29 @@ start
 :Forward train data;
 
 |Control Center|
-:Request platform availability;
+repeat
+  :Request platform availability;
 
-|Signaling|
-:Relay availability request;
+  |Signaling|
+  :Relay availability request;
 
-|Train Station|
-:Receive availability request;
-:Check platform availability;
-:Send availability status;
+  |Train Station|
+  :Receive availability request;
+  :Check platform availability;
+  :Send availability status;
 
-|Signaling|
-:Relay availability status;
+  |Signaling|
+  :Relay availability status;
 
-|Control Center|
-:Authorize arrival;
+  |Control Center|
+  if (Platform available?) then (yes)
+    :Authorize arrival;
+    break
+  else (no)
+    :Issue delay instruction;
+  endif
+backward:Wait for clearance;
+repeat while (Re-check availability?) is (yes)
 
 |Signaling|
 :Transmit arrival authorization;
@@ -75,14 +84,23 @@ end fork
 :Forward departure readiness;
 
 |Control Center|
-:Receive departure readiness;
-:Issue departure clearance;
+repeat
+  :Receive departure readiness;
+  if (All services ready?) then (yes)
+    :Issue departure clearance;
+    break
+  else (no)
+    :Maintain station hold;
+  endif
+backward:Awaiting final readiness;
+repeat while (Ready to depart?) is (yes)
 
 |Signaling|
 :Transmit departure clearance;
 
 |Train|
 :Receive departure clearance;
+:Initiate departure;
 
 stop
 @enduml

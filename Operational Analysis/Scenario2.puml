@@ -1,0 +1,53 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+}
+
+|SOI – WT System (Black Box)|
+start
+:Approach railroad crossing;
+:Receive train approach information;
+:Assess crossing risk;
+
+:Initiate crossing protection;
+:Send command -> CLOSE gate;
+:Activate warning lights & bell;
+
+|Gate (External Infrastructure)|
+:Gate arms lowering;
+:Gate fully closed;
+
+|SOI – WT System (Black Box)|
+:Receive gate closed status;
+if (Crossing secured?) then (yes)
+  :Proceed with crossing;
+else (no)
+  :Abort crossing;
+  stop
+endif
+
+|Citizens|
+:Observe closed gate;
+:Stop and wait;
+
+|SOI – WT System (Black Box)|
+:Traverse railroad crossing;
+:Clear railroad crossing;
+
+:Send command -> OPEN gate;
+:Deactivate warning lights & bell;
+
+|Gate (External Infrastructure)|
+:Gate arms raising;
+:Gate fully open;
+
+|Citizens|
+:Resume normal movement;
+
+|SOI – WT System (Black Box)|
+:Resume normal operation speed;
+stop
+@enduml
